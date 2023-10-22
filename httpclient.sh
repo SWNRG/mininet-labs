@@ -15,10 +15,10 @@ total_time=0
 # Function to calculate and display statistics
 display_statistics() {
     if [ $total_requests -gt 0 ]; then
-        average_time=$(bc -l <<< "scale=2; $total_time / $total_requests")
-        echo "Statistics after $total_requests requests:"
-        echo "Total Time: $total_time seconds"
-        echo "Average Time per Request: $average_time seconds"
+        average_time=$(bc -l <<< "scale=4; $total_time / $total_requests")
+        printf "Statistics after %.4f requests:\n" $total_requests
+        printf "Total Time: %.4f seconds\n" $total_time
+        printf "Average Time per Request: %.4f seconds\n" $average_time
     fi
     exit 0
 }
@@ -33,6 +33,9 @@ while true; do
         echo "curl execution failed"
         exit 1
     fi
+
+
+    printf "response time: %.4f\n" $response_time
 
     # Update statistics
     total_requests=$((total_requests + 1))
