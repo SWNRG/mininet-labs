@@ -8,4 +8,4 @@ sudo apt install lftp
 #fallocate -l 1GB 1gb-file
 fallocate -l 512mb 512mb-file
 
-sudo cp httpclient.sh httpserver.sh ftpclient.sh ftpserver.sh /usr/bin/
+sudo cp httpclient httpserver ftpclient ftpserver /usr/bin/
