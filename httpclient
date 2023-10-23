@@ -23,8 +23,8 @@ display_statistics() {
     if [ $total_requests -gt 0 ]; then
         average_time=$(bc -l <<< "scale=4; $total_time / $total_requests")
         printf "statistics after %d requests:\n" $total_requests
-        printf "total time: %.4f seconds\n" $total_time
-        printf "average time per request: %.4f seconds\n" $average_time
+        printf "total time: %.2f ms\n" $total_time
+        printf "average time per request: %.2f ms\n" $average_time
     fi
     exit 0
 }
@@ -45,7 +45,10 @@ while [[ $iterations -ne 0 ]]; do
     # Set the LC_NUMERIC environment variable to use a comma as the decimal separator
     LC_NUMERIC="en_US.UTF-8"  # Adjust the locale as needed
 
-    printf "response time: %.4f seconds\n" $response_time
+    # convert response time from seconds to ms
+    response_time=$(echo "$response_time * 1000" | bc)
+
+    printf "response time: %.2f ms\n" $response_time
 
     # Update statistics
     total_requests=$((total_requests + 1))
