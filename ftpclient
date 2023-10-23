@@ -11,6 +11,9 @@ fi
 #filename="1gb-file"
 filename="512mb-file"
 
+# Set the LC_NUMERIC environment variable to use a comma as the decimal separator
+LC_NUMERIC="en_US.UTF-8"  # Adjust the locale as needed
+
 mkdir ~/tmp 2> /dev/null
 cd ~/tmp
 rm $filename 2> /dev/null

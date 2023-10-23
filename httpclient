@@ -36,6 +36,9 @@ while true; do
 
     response_time="${response_time//[^0-9.]/}"
 
+    # Set the LC_NUMERIC environment variable to use a comma as the decimal separator
+    LC_NUMERIC="en_US.UTF-8"  # Adjust the locale as needed
+
     printf "response time: %.4f\n" $response_time
 
     # Update statistics
