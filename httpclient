@@ -34,6 +34,7 @@ while true; do
         exit 1
     fi
 
+    response_time="${response_time//[^0-9.]/}"
 
     printf "response time: %.4f\n" $response_time
 
