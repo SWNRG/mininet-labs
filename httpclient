@@ -3,9 +3,15 @@
 # Check if at least one argument is passed
 if [ $# -eq 1 ]; then
     hostname=$1
+    iterations=-1
 else
-    echo "Syntax: ./httpclient.sh hostname"
-    exit 1
+    if [ $# -eq 2 ]; then
+       hostname=$1
+       iterations=$2
+    else
+       echo "Syntax: httpclient hostname or httpclient hostname iterations"
+       exit 1
+    fi
 fi
 
 # Initialize variables for statistics
@@ -16,9 +22,9 @@ total_time=0
 display_statistics() {
     if [ $total_requests -gt 0 ]; then
         average_time=$(bc -l <<< "scale=4; $total_time / $total_requests")
-        printf "Statistics after %.4f requests:\n" $total_requests
-        printf "Total Time: %.4f seconds\n" $total_time
-        printf "Average Time per Request: %.4f seconds\n" $average_time
+        printf "statistics after %d requests:\n" $total_requests
+        printf "total time: %.4f seconds\n" $total_time
+        printf "average time per request: %.4f seconds\n" $average_time
     fi
     exit 0
 }
@@ -26,7 +32,7 @@ display_statistics() {
 # Set up a trap for Ctrl+C to call the statistics function
 trap 'display_statistics' SIGINT
 
-while true; do
+while [[ $iterations -ne 0 ]]; do
     response_time=$(curl -o /dev/null -s -w '%{time_total}\n' "$hostname:8080")
     # Check the exit code of the command
     if [ $? -ne 0 ]; then
@@ -39,11 +45,16 @@ while true; do
     # Set the LC_NUMERIC environment variable to use a comma as the decimal separator
     LC_NUMERIC="en_US.UTF-8"  # Adjust the locale as needed
 
-    printf "response time: %.4f\n" $response_time
+    printf "response time: %.4f seconds\n" $response_time
 
     # Update statistics
     total_requests=$((total_requests + 1))
     total_time=$(bc -l <<< "scale=2; $total_time + $response_time")
 
+    # decrease iterations number
+    iterations=$((iterations - 1))
+
     sleep 1
 done
+
+display_statistics

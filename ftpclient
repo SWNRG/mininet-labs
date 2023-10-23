@@ -3,9 +3,15 @@
 # Check if at least one argument is passed
 if [ $# -eq 1 ]; then
     hostname=$1
+    iterations=-1
 else
-    echo "Syntax: ./ftpclient.sh hostname"
-    exit 1
+    if [ $# -eq 2 ]; then
+       hostname=$1
+       iterations=$2
+    else
+       echo "Syntax: ftpclient hostname or ftpclient hostname iterations"
+       exit 1
+    fi
 fi
 
 #filename="1gb-file"
@@ -18,8 +24,31 @@ mkdir ~/tmp 2> /dev/null
 cd ~/tmp
 rm $filename 2> /dev/null
 
-while true; do
-  lftp -e "get $filename;exit" $hostname:2121 -u mn-wifi,mn-wifi
+# Initialize variables for statistics
+total_requests=0
+total_time=0
+
+# Function to calculate and display statistics
+display_statistics() {
+    if [ $total_requests -gt 0 ]; then
+        average_time=$(bc -l <<< "scale=4; $total_time / $total_requests")
+        printf "statistics after %d requests:\n" $total_requests
+        printf "total time: %.4f seconds\n" $total_time
+        printf "average time per request: %.4f seconds\n" $average_time
+    fi
+    exit 0
+}
+
+# Set up a trap for Ctrl+C to call the statistics function
+trap 'display_statistics' SIGINT
+
+while [[ $iterations -ne 0 ]]; do
+   start_time=$(date +%s.%N)   
+   lftp -e "get $filename;exit" $hostname:2121 -u mn-wifi,mn-wifi > /dev/null
+   end_time=$(date +%s.%N)
+   response_time=$(echo "$end_time - $start_time" | bc)
+   printf "download time: %.4f seconds\n" $response_time 
+
   #lftp -u mn-wifi,mn-wifi -e "get $filename;exit" localhost:2121 | awk -F '[()]' '{print $(NF-1)}'
   # Check the exit code of the command
   if [ $? -ne 0 ]; then
@@ -27,5 +56,15 @@ while true; do
     exit 1  
   fi
   rm $filename
+
+  # Update statistics
+  total_requests=$((total_requests + 1))
+  total_time=$(bc -l <<< "scale=2; $total_time + $response_time")
+
+  # decrease iterations number
+  iterations=$((iterations - 1))
+
   sleep 1
 done
+
+display_statistics
