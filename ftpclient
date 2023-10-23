@@ -15,7 +15,8 @@ else
 fi
 
 #filename="1gb-file"
-filename="512mb-file"
+#filename="512mb-file"
+filename="256mb-file"
 
 # Set the LC_NUMERIC environment variable to use a comma as the decimal separator
 LC_NUMERIC="en_US.UTF-8"  # Adjust the locale as needed
