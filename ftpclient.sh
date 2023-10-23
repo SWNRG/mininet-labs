@@ -8,7 +8,8 @@ else
     exit 1
 fi
 
-filename="1gb-file"
+#filename="1gb-file"
+filename="512mb-file"
 
 mkdir ~/tmp 2> /dev/null
 cd ~/tmp

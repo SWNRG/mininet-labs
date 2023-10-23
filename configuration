@@ -5,5 +5,7 @@ sudo pip3 install pyftpdlib
 sudo apt install lftp
 
 # creating files to upload
-fallocate -l 1GB 1gb-file
-#fallocate -l 512mb 512mb-file
+#fallocate -l 1GB 1gb-file
+fallocate -l 512mb 512mb-file
+
+sudo cp httpclient.sh httpserver.sh ftpclient.sh ftpserver.sh /usr/bin/
